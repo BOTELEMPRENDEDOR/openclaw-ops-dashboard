@@ -1,13 +1,13 @@
 {
-  "generated": "2026-03-08T20:20:23+00:00",
+  "generated": "2026-03-08T20:24:29+00:00",
   "system": {
     "os": "Linux 6.8.0-40-generic (x86_64)",
     "node": "v22.22.0",
     "hostname": "166"
   },
   "gateway": {
-    "service": "stopped",
-    "pid": 0
+    "service": "running",
+    "pid": 356640
   },
   "agents": [
     {
@@ -17,8 +17,8 @@
     }
   ],
   "sessions": {
-    "total": 72,
-    "active": 10
+    "total": 78,
+    "active": 78
   },
   "channels": {
     "telegram": "ok",

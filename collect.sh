@@ -12,11 +12,11 @@ echo "    \"node\": \"$(node -v 2>/dev/null || echo 'N/A')\","
 echo "    \"hostname\": \"$(hostname)\""
 echo "  },"
 
-# Gateway Status
+# Gateway Status (OpenClaw commonly runs as a user service)
 echo "  \"gateway\": {"
-if systemctl is-active openclaw-gateway &>/dev/null; then
+if systemctl --user is-active openclaw-gateway &>/dev/null; then
   echo "    \"service\": \"running\","
-  echo "    \"pid\": $(systemctl show openclaw-gateway -p MainPID --value 2>/dev/null || echo '0')"
+  echo "    \"pid\": $(systemctl --user show openclaw-gateway -p MainPID --value 2>/dev/null || echo '0')"
 else
   echo "    \"service\": \"stopped\","
   echo "    \"pid\": 0"
@@ -32,10 +32,24 @@ echo "      \"status\": \"active\""
 echo "    }"
 echo "  ],"
 
-# Active Sessions (from openclaw status)
+# Active Sessions (best-effort from sessions registry)
+SESSIONS_JSON="$HOME/.openclaw/agents/main/sessions/sessions.json"
+if [ -f "$SESSIONS_JSON" ]; then
+  total_sessions=$(python3 - <<'PY'
+import json, os
+p=os.path.expanduser('~/.openclaw/agents/main/sessions/sessions.json')
+with open(p) as f:
+    data=json.load(f)
+print(len(data))
+PY
+)
+else
+  total_sessions=0
+fi
+
 echo "  \"sessions\": {"
-echo "    \"total\": 72,"
-echo "    \"active\": 10"
+echo "    \"total\": ${total_sessions},"
+echo "    \"active\": ${total_sessions}"
 echo "  },"
 
 # Channels
