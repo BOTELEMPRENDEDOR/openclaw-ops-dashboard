@@ -1,20 +1,54 @@
 # STATUS - OpenClaw Operations Dashboard
 
-## Estado: ✅ LISTO PARA GITHUB/VERCEL
+## Estado: ✅ PROYECTO MEJORADO
 
-### Archivos Creados
-- ✅ collect.sh - Recolector de datos
-- ✅ dashboard.html - Interfaz visual
-- ✅ data.json - Datos actuales
-- ✅ README.md - Documentación
-- ✅ INTEGRATION.md - Plan de despliegue
-- ✅ .gitignore
-- ✅ Git inicializado (commit hecho)
+### Mejoras Implementadas
 
-### Siguiente Paso
-1. Crear repo en GitHub
-2. Conectar a Vercel
+1. **Datos Reales**: collect.sh ahora usa:
+   - `openclaw status --json`
+   - `openclaw cron list --json`
+   - `openclaw agents list --json`
+   - `openclaw channels status --json`
+   - `openclaw security audit --json`
 
-### Pendiente
-- Corregir detección de gateway service status
-- Webhook para actualización automática
+2. **Degradación Honesta**: 
+   - Campos unavailable → "unknown"
+   - JSON parse fail → `null` 
+   - CLI no disponible → fallback graceful
+
+3. **Nuevas Secciones**:
+   - ✅ Trabajos activos (active_jobs)
+   - ✅ Bloqueos (blockers) 
+   - ✅ Próximos pasos (next_steps)
+
+4. **Documentación**:
+   - README.md con tabla dinámica vs estático
+   - INTEGRATION.md actualizado
+
+### Estado Dinámico vs Estático
+
+| Dato | Tipo | Fuente |
+|------|------|--------|
+| Sistema | ✅ Dinámico | openclaw status |
+| Gateway | ✅ Dinámico | openclaw status |
+| Agents | ✅ Dinámico | openclaw agents list |
+| Sessions | ✅ Dinámico | openclaw status |
+| Cron Jobs | ✅ Dinámico | openclaw cron list |
+| Channels | ✅ Dinámico | openclaw channels status |
+| Security | ✅ Dinámico | openclaw security audit |
+| Active Jobs | ✅ Dinámico | openclaw cron list |
+| Blockers | ✅ Dinámico | channels + system |
+| Next Steps | ✅ Dinámico | lógica basada en estado |
+| ~~Últimos resultados~~ | ❌ Stub | Por implementar |
+
+### Pendientes
+
+- [ ] Últimos resultados de trabajos (parsear logs)
+- [ ] Webhook para update automático
+- [ ] Mejoras UI (opcional)
+
+### Git
+
+- ✅ Git inicializado
+- ✅ Commits hechos
+- ⚠️ Listo para GitHub (falta remote y push manual)

@@ -1,14 +1,14 @@
 # OpenClaw Operations Dashboard
 
-Dashboard estático para monitoreo de operaciones de OpenClaw.
+Dashboard operativo para monitoreo de OpenClaw.
 
 ## Estructura
 
 ```
 openclaw-ops-dashboard/
-├── collect.sh          # Recolecta datos del sistema
-├── data.json           # Datos actuales (generado por collect.sh)
-├── dashboard.html      # Panel visual simple
+├── collect.sh          # Recolector de datos REALES desde OpenClaw CLI
+├── data.json           # Datos actuales (generado dinámicamente)
+├── dashboard.html      # Panel visual
 ├── README.md           # Este archivo
 └── INTEGRATION.md      # Plan de integración
 ```
@@ -16,26 +16,43 @@ openclaw-ops-dashboard/
 ## Uso
 
 ```bash
-# Recolectar datos
+# Recolectar datos en tiempo real
 ./collect.sh > data.json
 
 # Ver dashboard
-# Abre dashboard.html en un navegador
+open dashboard.html en navegador
 ```
 
-## Datos Incluidos
+## Datos Dinámicos vs Estáticos
 
-- **Estado general**: OS, Node, Gateway service
-- **Agentes**: Lista de agentes activos
-- **Sesiones**: Contador de sesiones
-- **Canales**: Estado de Telegram/WhatsApp
-- **Cron Jobs**: Trabajos programados y su estado
-- **Seguridad**: Warnings y errores
-- **Blockers**: Problemas conocidos
+### ✅ Datos Dinámicos (tiempo real)
+
+| Campo | Fuente | Estado |
+|-------|--------|--------|
+| Sistema (OS, node, hostname) | `openclaw status --json` | ✅ Funcionando |
+| Gateway state | `openclaw status --json` | ✅ Funcionando |
+| Agents | `openclaw agents list --json` | ✅ Funcionando |
+| Sessions | `openclaw status --json` | ✅ Funcionando |
+| Cron Jobs | `openclaw cron list --json` | ✅ Funcionando |
+| Channels Status | `openclaw channels status --json` | ✅ Funcionando |
+| Security Audit | `openclaw security audit --json` | ✅ Funcionando |
+
+### ⚠️ Datos con Degradación
+
+| Campo | Fallback |
+|-------|----------|
+| hostname/ip | "unknown" si no disponible |
+| version | "unknown" si no disponible |
+| gateway state | "unavailable" si CLI falla |
+| Todos los campos | `null` → se muestra "unknown" |
+
+### ❌ Por hacer ( stubs )
+
+- **Últimos resultados de trabajo**: requiere parseo de logs
+- **Blockers detallados**: parcialmente implementado
+- **Próximos pasos**: básico, expandir
 
 ## Despliegue
-
-Este proyecto está diseñado para desplegarse en Vercel como sitio estático.
 
 ### Vercel
 
@@ -44,35 +61,23 @@ npm i -g vercel
 vercel
 ```
 
-O conecta el repositorio a Vercel para deployments automáticos.
-
 ### GitHub Pages
 
-1. Ve a Settings > Pages
-2. Selecciona "gh-pages" como source
-3. Saves
+1. Settings > Pages
+2. Seleccionar "gh-pages" como source
 
 ## Actualización
 
-Para actualizar los datos en producción:
-
 ```bash
-# Desde el servidor OpenClaw
-cd /root/.openclaw/workspace/tools/openclaw-ops-dashboard
+# Manual
 ./collect.sh > data.json
 git add data.json
-git commit -m "Update dashboard data"
-git push
-```
+git commit -m "Update dashboard data" && git push
 
-## Automatización
-
-Agrega un cron en el servidor:
-
-```bash
+# Automático (cron)
 */5 * * * * cd /root/.openclaw/workspace/tools/openclaw-ops-dashboard && ./collect.sh > data.json
 ```
 
 ---
 
-**Nota**: Este dashboard es de solo lectura. No modify configuración de OpenClaw.
+**Nota**: Dashboard de solo lectura. No modifica configuración de OpenClaw.

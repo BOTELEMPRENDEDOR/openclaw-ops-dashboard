@@ -1,45 +1,342 @@
 {
-  "generated": "2026-03-08T20:24:29+00:00",
+  "generated": "2026-03-08T20:27:41+00:00",
+  "data_source": "openclaw_cli",
   "system": {
-    "os": "Linux 6.8.0-40-generic (x86_64)",
+    "available": true,
+    "hostname": "unknown",
+    "ip": "unknown",
+    "os": "Linux 6.8.0-40-generic",
     "node": "v22.22.0",
-    "hostname": "166"
+    "version": "unknown"
   },
   "gateway": {
-    "service": "running",
-    "pid": 356640
+    "state": "unknown",
+    "url": "ws://127.0.0.1:18789"
   },
-  "agents": [
-    {
-      "name": "main",
-      "type": "default",
-      "status": "active"
-    }
-  ],
+  "agents": {
+    "available": true,
+    "count": 1,
+    "list": [
+  {
+    "id": "main",
+    "identityName": "Claw",
+    "identityEmoji": "⚡",
+    "identitySource": "identity",
+    "workspace": "/root/.openclaw/workspace",
+    "agentDir": "/root/.openclaw/agents/main/agent",
+    "model": "openai-codex/gpt-5.4",
+    "bindings": 0,
+    "isDefault": true,
+    "routes": [
+      "default (no explicit rules)"
+    ]
+  }
+]
+  },
   "sessions": {
-    "total": 78,
-    "active": 78
+    "total": 80,
+    "recent": [
+  {
+    "agentId": "main",
+    "key": "agent:main:cron:04694cba-f10f-4a84-9b57-0f60838e065b",
+    "kind": "direct",
+    "sessionId": "b7330a28-145b-4236-b47f-a1f49481731f",
+    "updatedAt": 1773001560010,
+    "age": 107081,
+    "systemSent": true,
+    "inputTokens": 68754,
+    "outputTokens": 2015,
+    "cacheRead": 321152,
+    "cacheWrite": 0,
+    "totalTokens": 68905,
+    "totalTokensFresh": true,
+    "remainingTokens": 131095,
+    "percentUsed": 34,
+    "model": "gpt-5.4",
+    "contextTokens": 200000,
+    "flags": [
+      "system",
+      "id:b7330a28-145b-4236-b47f-a1f49481731f"
+    ]
+  },
+  {
+    "agentId": "main",
+    "key": "agent:main:cron:04694cba-f10f-4a84-9b57-0f60838e065b:run:b7330a28-145b-4236-b47f-a1f49481731f",
+    "kind": "direct",
+    "sessionId": "b7330a28-145b-4236-b47f-a1f49481731f",
+    "updatedAt": 1773001560010,
+    "age": 107081,
+    "systemSent": true,
+    "inputTokens": 68754,
+    "outputTokens": 2015,
+    "cacheRead": 321152,
+    "cacheWrite": 0,
+    "totalTokens": 68905,
+    "totalTokensFresh": true,
+    "remainingTokens": 131095,
+    "percentUsed": 34,
+    "model": "gpt-5.4",
+    "contextTokens": 200000,
+    "flags": [
+      "system",
+      "id:b7330a28-145b-4236-b47f-a1f49481731f"
+    ]
+  },
+  {
+    "agentId": "main",
+    "key": "agent:main:subagent:5a2103d4-1f1c-497f-a144-2c387855fde3",
+    "kind": "direct",
+    "sessionId": "99e84be7-5303-4b6c-b03f-d4b414bf8fd0",
+    "updatedAt": 1773001534286,
+    "age": 132805,
+    "abortedLastRun": false,
+    "inputTokens": 24165,
+    "outputTokens": 5823,
+    "cacheRead": 241559,
+    "cacheWrite": 0,
+    "totalTokens": 18096,
+    "totalTokensFresh": true,
+    "remainingTokens": 186704,
+    "percentUsed": 9,
+    "model": "minimax/minimax-m2.5:free",
+    "contextTokens": 204800,
+    "flags": [
+      "id:99e84be7-5303-4b6c-b03f-d4b414bf8fd0"
+    ]
+  },
+  {
+    "agentId": "main",
+    "key": "agent:main:telegram:direct:1587477518",
+    "kind": "direct",
+    "sessionId": "06342e2c-02e0-4769-9828-a4b0fad73318",
+    "updatedAt": 1773001522225,
+    "age": 144866,
+    "systemSent": true,
+    "abortedLastRun": false,
+    "inputTokens": 863,
+    "outputTokens": 368,
+    "cacheRead": 138880,
+    "cacheWrite": 0,
+    "totalTokens": 139743,
+    "totalTokensFresh": true,
+    "remainingTokens": 860257,
+    "percentUsed": 14,
+    "model": "gpt-5.4",
+    "contextTokens": 1000000,
+    "flags": [
+      "system",
+      "id:06342e2c-02e0-4769-9828-a4b0fad73318"
+    ]
+  },
+  {
+    "agentId": "main",
+    "key": "agent:main:main",
+    "kind": "direct",
+    "sessionId": "b55a3693-6ac0-44a6-941f-2b4bc32b7580",
+    "updatedAt": 1773001522167,
+    "age": 144924,
+    "systemSent": true,
+    "abortedLastRun": false,
+    "inputTokens": 11182,
+    "outputTokens": 141,
+    "cacheRead": 10112,
+    "cacheWrite": 0,
+    "totalTokens": 11126,
+    "totalTokensFresh": true,
+    "remainingTokens": 119946,
+    "percentUsed": 8,
+    "model": "gpt-5.4",
+    "contextTokens": 131072,
+    "flags": [
+      "system",
+      "id:b55a3693-6ac0-44a6-941f-2b4bc32b7580"
+    ]
+  },
+  {
+    "agentId": "main",
+    "key": "agent:main:cron:04694cba-f10f-4a84-9b57-0f60838e065b:run:8f182f5c-0954-47fa-ba5c-393e81e2229c",
+    "kind": "direct",
+    "sessionId": "8f182f5c-0954-47fa-ba5c-393e81e2229c",
+    "updatedAt": 1773001500008,
+    "age": 167083,
+    "systemSent": true,
+    "inputTokens": 17283,
+    "outputTokens": 756,
+    "cacheRead": 53504,
+    "cacheWrite": 0,
+    "totalTokens": 17481,
+    "totalTokensFresh": true,
+    "remainingTokens": 182519,
+    "percentUsed": 9,
+    "model": "gpt-5.4",
+    "contextTokens": 200000,
+    "flags": [
+      "system",
+      "id:8f182f5c-0954-47fa-ba5c-393e81e2229c"
+    ]
+  },
+  {
+    "agentId": "main",
+    "key": "agent:main:cron:04694cba-f10f-4a84-9b57-0f60838e065b:run:ddc4c89c-97fa-4ef5-8c96-6dc8c8b77261",
+    "kind": "direct",
+    "sessionId": "ddc4c89c-97fa-4ef5-8c96-6dc8c8b77261",
+    "updatedAt": 1773001380008,
+    "age": 287083,
+    "systemSent": true,
+    "inputTokens": 38410,
+    "outputTokens": 3244,
+    "cacheRead": 444928,
+    "cacheWrite": 0,
+    "totalTokens": 39592,
+    "totalTokensFresh": true,
+    "remainingTokens": 160408,
+    "percentUsed": 20,
+    "model": "gpt-5.4",
+    "contextTokens": 200000,
+    "flags": [
+      "system",
+      "id:ddc4c89c-97fa-4ef5-8c96-6dc8c8b77261"
+    ]
+  },
+  {
+    "agentId": "main",
+    "key": "agent:main:cron:04694cba-f10f-4a84-9b57-0f60838e065b:run:06bc7bb8-cf38-46c8-959c-e2e100d0fba9",
+    "kind": "direct",
+    "sessionId": "06bc7bb8-cf38-46c8-959c-e2e100d0fba9",
+    "updatedAt": 1773001260015,
+    "age": 407076,
+    "systemSent": true,
+    "inputTokens": 79972,
+    "outputTokens": 2572,
+    "cacheRead": 222592,
+    "cacheWrite": 0,
+    "totalTokens": 58169,
+    "totalTokensFresh": true,
+    "remainingTokens": 141831,
+    "percentUsed": 29,
+    "model": "gpt-5.4",
+    "contextTokens": 200000,
+    "flags": [
+      "system",
+      "id:06bc7bb8-cf38-46c8-959c-e2e100d0fba9"
+    ]
+  },
+  {
+    "agentId": "main",
+    "key": "agent:main:cron:04694cba-f10f-4a84-9b57-0f60838e065b:run:9cbcc5bd-d266-4081-aa70-b6f1e65b7c1d",
+    "kind": "direct",
+    "sessionId": "9cbcc5bd-d266-4081-aa70-b6f1e65b7c1d",
+    "updatedAt": 1773001215731,
+    "age": 451360,
+    "systemSent": true,
+    "inputTokens": 13987,
+    "outputTokens": 505,
+    "cacheRead": 35584,
+    "cacheWrite": 0,
+    "totalTokens": 13982,
+    "totalTokensFresh": true,
+    "remainingTokens": 186018,
+    "percentUsed": 7,
+    "model": "gpt-5.4",
+    "contextTokens": 200000,
+    "flags": [
+      "system",
+      "id:9cbcc5bd-d266-4081-aa70-b6f1e65b7c1d"
+    ]
+  },
+  {
+    "agentId": "main",
+    "key": "agent:main:cron:617c886e-af80-4350-a507-0514f2371d10",
+    "kind": "direct",
+    "sessionId": "76a2c57b-02f6-47c8-b902-4abcda10facf",
+    "updatedAt": 1773001200012,
+    "age": 467079,
+    "systemSent": true,
+    "inputTokens": 15368,
+    "outputTokens": 429,
+    "cacheRead": 35840,
+    "cacheWrite": 0,
+    "totalTokens": 15259,
+    "totalTokensFresh": true,
+    "remainingTokens": 184741,
+    "percentUsed": 8,
+    "model": "gpt-5.4",
+    "contextTokens": 200000,
+    "flags": [
+      "system",
+      "id:76a2c57b-02f6-47c8-b902-4abcda10facf"
+    ]
+  }
+]
   },
   "channels": {
-    "telegram": "ok",
-    "whatsapp": "warn"
+    "available": true,
+    "telegram": {
+      "running": true,
+      "configured": true
+    },
+    "whatsapp": {
+      "running": false,
+      "linked": false,
+      "lastError": "not linked"
+    }
   },
-  "cron_jobs": [
-    {"name": "Supervisor 1m", "schedule": "* * * * *", "status": "ok", "next": "<1m"},
-    {"name": "Reporte 10m", "schedule": "*/10 * * * *", "status": "ok", "next": "1m"},
-    {"name": "Revision horaria", "schedule": "5 * * * *", "status": "ok", "next": "46m"},
-    {"name": "Progreso proactivo 150m", "schedule": "every 3h", "status": "ok", "next": "2h"},
-    {"name": "Moltbook interact", "schedule": "every 12h", "status": "ok", "next": "6h"},
-    {"name": "Sec-resumen 12h", "schedule": "every 12h", "status": "ok", "next": "6h"}
-  ],
+  "cron_jobs": {
+    "available": true,
+    "total": 6,
+    "jobs": [
+      {"id": "04694cba-f10f-4a84-9b57-0f60838e065b", "name": "Supervisor 1m tareas activas", "schedule": "* * * * *", "status": "ok", "next": "0m"},
+      {"id": "617c886e-af80-4350-a507-0514f2371d10", "name": "Trabajo activo: reporte cada 10 min", "schedule": "*/10 * * * *", "status": "ok", "next": "1m"},
+      {"id": "6af98094-5476-4bf5-8ab2-064e3a537510", "name": "Trabajo activo: revisar estado", "schedule": "5 * * * *", "status": "ok", "next": "36m"},
+      {"id": "03a7a713-3dca-49bc-a444-65622c9a4b61", "name": "progreso-proactivo-150m", "schedule": "every", "status": "ok", "next": "118m"},
+      {"id": "ea8203c8-2e21-49a2-9930-209ff0d7f1b4", "name": "moltbook-interact-2x-dia", "schedule": "every", "status": "ok", "next": "338m"},
+      {"id": "a4d30a28-a5f2-482e-89ca-e68bad2119b0", "name": "sec-resumen-12h", "schedule": "every", "status": "ok", "next": "342m"}
+    ]
+  },
   "security": {
     "critical": 0,
     "warnings": 1,
-    "info": 1
+    "info": 1,
+    "findings": [
+  {
+    "checkId": "summary.attack_surface",
+    "severity": "info",
+    "title": "Attack surface summary",
+    "detail": "groups: open=0, allowlist=1\ntools.elevated: disabled\nhooks.webhooks: disabled\nhooks.internal: disabled\nbrowser control: enabled\ntrust model: personal assistant (one trusted operator boundary), not hostile multi-tenant on one shared gateway"
   },
-  "recent_results": [],
+  {
+    "checkId": "gateway.trusted_proxies_missing",
+    "severity": "warn",
+    "title": "Reverse proxy headers are not trusted",
+    "detail": "gateway.bind is loopback and gateway.trustedProxies is empty. If you expose the Control UI through a reverse proxy, configure trusted proxies so local-client checks cannot be spoofed.",
+    "remediation": "Set gateway.trustedProxies to your proxy IPs or keep the Control UI local-only."
+  }
+]
+  },
+  "active_jobs": [
+  {"name":"Supervisor 1m tareas activas","lastRun":1773001560008,"status":"ok"},
+  {"name":"Trabajo activo: reporte cada 10 min","lastRun":1773001200008,"status":"ok"},
+  {"name":"Trabajo activo: revisar estado","lastRun":1772996700007,"status":"ok"},
+  {"name":"progreso-proactivo-150m","lastRun":1772999785610,"status":"ok"},
+  {"name":"moltbook-interact-2x-dia","lastRun":1772978797718,"status":"ok"},
+  {"name":"sec-resumen-12h","lastRun":1772979009410,"status":"ok"}
+  ],
   "blockers": [
-    "WhatsApp no vinculado (session expired)",
-    "Telegram groupPolicy allowlist vacio"
-  ]
+    {"type": "channel", "channel": "whatsapp", "issue": "Not linked (session expired or not configured)"}
+  ],
+  "next_steps": [
+    "Vincular WhatsApp: ejecutar openclaw channels link whatsapp",
+    "Revisar configuración de grupo en Telegram"
+  ],
+  "metadata": {
+    "collector_version": "1.0.0",
+    "dynamic_data": true,
+    "sources": [
+      "openclaw status --json",
+      "openclaw cron list --json",
+      "openclaw agents list --json",
+      "openclaw channels status --json",
+      "openclaw security audit --json"
+    ]
+  }
 }

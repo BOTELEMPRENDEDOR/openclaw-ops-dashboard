@@ -12,13 +12,14 @@
     h2 { color: #8b949e; font-size: 1rem; margin-bottom: 20px; }
     h3 { color: #f0f6fc; margin: 20px 0 10px; font-size: 1.1rem; border-bottom: 1px solid #30363d; padding-bottom: 5px; }
     .card { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 15px; margin-bottom: 15px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
     .stat { text-align: center; padding: 10px; }
     .stat-value { font-size: 2rem; font-weight: bold; }
     .stat-label { color: #8b949e; font-size: 0.85rem; }
     .ok { color: #3fb950; }
     .warn { color: #d29922; }
     .error { color: #f85149; }
+    .unknown { color: #6e7681; }
     table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
     th, td { text-align: left; padding: 8px; border-bottom: 1px solid #30363d; }
     th { color: #8b949e; font-weight: normal; }
@@ -26,36 +27,48 @@
     .badge-ok { background: rgba(63,185,80,0.2); color: #3fb950; }
     .badge-warn { background: rgba(210,153,34,0.2); color: #d29922; }
     .badge-error { background: rgba(248,81,73,0.2); color: #f85149; }
+    .badge-unknown { background: rgba(110,118,129,0.2); color: #6e7681; }
     ul { list-style: none; }
     li { padding: 5px 0; }
     .mono { font-family: monospace; font-size: 0.85rem; }
     .timestamp { color: #8b949e; font-size: 0.8rem; text-align: right; margin-top: 20px; }
     a { color: #58a6ff; text-decoration: none; }
     a:hover { text-decoration: underline; }
+    .refresh-btn { background: #238636; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+    .refresh-btn:hover { background: #2ea043; }
+    .header { display: flex; justify-content: space-between; align-items: center; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>⚡ OpenClaw Operations</h1>
-    <h2>Panel de Control - Estado General</h2>
+    <div class="header">
+      <div>
+        <h1>⚡ OpenClaw Operations</h1>
+        <h2>Panel de Control Operativo</h2>
+      </div>
+      <button class="refresh-btn" onclick="location.reload()">🔄 Refresh</button>
+    </div>
+
+    <div id="generated" class="timestamp">Cargando...</div>
 
     <!-- System Overview -->
+    <h3>📊 Estado General</h3>
     <div class="grid">
       <div class="card stat">
-        <div class="stat-value ok">●</div>
-        <div class="stat-label">Gateway Service</div>
+        <div class="stat-value ok" id="gateway-state">●</div>
+        <div class="stat-label">Gateway</div>
       </div>
       <div class="card stat">
-        <div class="stat-value">1</div>
+        <div class="stat-value" id="agent-count">-</div>
         <div class="stat-label">Agentes</div>
       </div>
       <div class="card stat">
-        <div class="stat-value">72</div>
+        <div class="stat-value" id="session-count">-</div>
         <div class="stat-label">Sesiones</div>
       </div>
       <div class="card stat">
-        <div class="stat-value warn">1</div>
-        <div class="stat-label">Warnings</div>
+        <div class="stat-value" id="cron-count">-</div>
+        <div class="stat-label">Cron Jobs</div>
       </div>
     </div>
 
@@ -64,8 +77,16 @@
     <div class="card">
       <table>
         <tr><th>Canal</th><th>Estado</th><th>Detalle</th></tr>
-        <tr><td>Telegram</td><td><span class="badge badge-ok">OK</span></td><td class="mono">token config · 1/1 accounts</td></tr>
-        <tr><td>WhatsApp</td><td><span class="badge badge-warn">WARN</span></td><td class="mono">Not linked (no session)</td></tr>
+        <tr>
+          <td>Telegram</td>
+          <td id="tg-status"><span class="badge badge-unknown">...</span></td>
+          <td class="mono" id="tg-detail">cargando...</td>
+        </tr>
+        <tr>
+          <td>WhatsApp</td>
+          <td id="wa-status"><span class="badge badge-unknown">...</span></td>
+          <td class="mono" id="wa-detail">cargando...</td>
+        </tr>
       </table>
     </div>
 
@@ -73,22 +94,41 @@
     <h3>⏰ Trabajos Programados</h3>
     <div class="card">
       <table>
-        <tr><th>Nombre</th><th>Schedule</th><th>Próximo</th><th>Estado</th></tr>
-        <tr><td>Supervisor 1m</td><td class="mono">* * * * *</td><td>&lt;1m</td><td><span class="badge badge-ok">ok</span></td></tr>
-        <tr><td>Reporte 10m</td><td class="mono">*/10 * * * *</td><td>1m</td><td><span class="badge badge-ok">ok</span></td></tr>
-        <tr><td>Revision horaria</td><td class="mono">5 * * * *</td><td>46m</td><td><span class="badge badge-ok">ok</span></td></tr>
-        <tr><td>Progreso proactivo</td><td class="mono">every 3h</td><td>2h</td><td><span class="badge badge-ok">ok</span></td></tr>
-        <tr><td>Moltbook interact</td><td class="mono">every 12h</td><td>6h</td><td><span class="badge badge-ok">ok</span></td></tr>
-        <tr><td>Sec-resumen</td><td class="mono">every 12h</td><td>6h</td><td><span class="badge badge-ok">ok</span></td></tr>
+        <thead>
+          <tr><th>Nombre</th><th>Schedule</th><th>Próximo</th><th>Estado</th></tr>
+        </thead>
+        <tbody id="cron-list">
+          <tr><td colspan="4" class="unknown">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Active Jobs -->
+    <h3>🔄 Trabajos Activos (última ejecución)</h3>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th>Nombre</th><th>Última ejecución</th><th>Estado</th></tr>
+        </thead>
+        <tbody id="active-jobs">
+          <tr><td colspan="3" class="unknown">Cargando...</td></tr>
+        </tbody>
       </table>
     </div>
 
     <!-- Blockers -->
     <h3>🚧 Bloqueos / Problemas</h3>
     <div class="card">
-      <ul>
-        <li>⚠️ WhatsApp no vinculado (session expired)</li>
-        <li>⚠️ Telegram groupPolicy allowlist vacío (grupos silenciados)</li>
+      <ul id="blockers">
+        <li class="unknown">Cargando...</li>
+      </ul>
+    </div>
+
+    <!-- Next Steps -->
+    <h3>📌 Próximos Pasos</h3>
+    <div class="card">
+      <ul id="next-steps">
+        <li class="unknown">Cargando...</li>
       </ul>
     </div>
 
@@ -96,25 +136,164 @@
     <h3>🔒 Seguridad</h3>
     <div class="card">
       <div class="grid">
-        <div class="stat"><div class="stat-value">0</div><div class="stat-label">Critical</div></div>
-        <div class="stat"><div class="stat-value warn">1</div><div class="stat-label">Warnings</div></div>
-        <div class="stat"><div class="stat-value">1</div><div class="stat-label">Info</div></div>
+        <div class="stat"><div class="stat-value" id="sec-critical">-</div><div class="stat-label">Critical</div></div>
+        <div class="stat"><div class="stat-value" id="sec-warn">-</div><div class="stat-label">Warnings</div></div>
+        <div class="stat"><div class="stat-value" id="sec-info">-</div><div class="stat-label">Info</div></div>
       </div>
-      <p style="margin-top:10px;font-size:0.85rem;color:#8b949e;">⚠️ Reverse proxy headers not trusted (loopback bind)</p>
+      <div id="sec-findings" style="margin-top:10px;font-size:0.85rem;color:#8b949e;"></div>
     </div>
 
     <!-- System Info -->
     <h3>💻 Sistema</h3>
     <div class="card mono" style="font-size:0.85rem;">
-      <div>OS: linux 6.8.0-40-generic (x64)</div>
-      <div>Node: v22.22.0</div>
-      <div>Host: 166 (166.0.112.163)</div>
-      <div>Dashboard: http://127.0.0.1:18789/</div>
+      <div>OS: <span id="sys-os">cargando...</span></div>
+      <div>Node: <span id="sys-node">cargando...</span></div>
+      <div>Gateway URL: <span id="sys-gateway">cargando...</span></div>
     </div>
 
     <div class="timestamp">
-      Actualizado: 2026-03-08T20:17:00Z | <a href="https://github.com">GitHub</a> | <a href="https://vercel.com">Vercel</a>
+      Generado: <span id="timestamp">...</span> | <a href="https://github.com">GitHub</a> | <a href="https://vercel.com">Vercel</a>
     </div>
   </div>
+
+  <script>
+    async function loadDashboard() {
+      try {
+        const response = await fetch('data.json');
+        const data = await response.json();
+        
+        // Timestamp
+        document.getElementById('generated').textContent = 'Actualizado: ' + data.generated;
+        document.getElementById('timestamp').textContent = data.generated;
+        
+        // System
+        document.getElementById('sys-os').textContent = data.system?.os || 'unknown';
+        document.getElementById('sys-node').textContent = data.system?.node || 'unknown';
+        document.getElementById('sys-gateway').textContent = data.gateway?.url || 'unknown';
+        
+        // Gateway state
+        const gwState = data.gateway?.state || 'unknown';
+        const gwEl = document.getElementById('gateway-state');
+        if (gwState === 'ready' || gwState === 'running') {
+          gwEl.textContent = '●';
+          gwEl.className = 'stat-value ok';
+        } else if (gwState === 'unknown' || gwState === 'unavailable') {
+          gwEl.textContent = '?';
+          gwEl.className = 'stat-value unknown';
+        } else {
+          gwEl.textContent = '○';
+          gwEl.className = 'stat-value warn';
+        }
+        
+        // Agents
+        document.getElementById('agent-count').textContent = data.agents?.count || 0;
+        
+        // Sessions
+        document.getElementById('session-count').textContent = data.sessions?.total || 0;
+        
+        // Cron
+        document.getElementById('cron-count').textContent = data.cron_jobs?.total || 0;
+        
+        // Channels
+        const tg = data.channels?.telegram || {};
+        const wa = data.channels?.whatsapp || {};
+        
+        const tgStatus = document.getElementById('tg-status');
+        if (tg.running) {
+          tgStatus.innerHTML = '<span class="badge badge-ok">OK</span>';
+          document.getElementById('tg-detail').textContent = 'running: true';
+        } else {
+          tgStatus.innerHTML = '<span class="badge badge-error">DOWN</span>';
+          document.getElementById('tg-detail').textContent = 'running: false';
+        }
+        
+        const waStatus = document.getElementById('wa-status');
+        if (wa.linked) {
+          waStatus.innerHTML = '<span class="badge badge-ok">LINKED</span>';
+        } else if (wa.running) {
+          waStatus.innerHTML = '<span class="badge badge-warn">RUNNING</span>';
+        } else {
+          waStatus.innerHTML = '<span class="badge badge-warn">NOT LINKED</span>';
+        }
+        document.getElementById('wa-detail').textContent = wa.lastError || 'not linked';
+        
+        // Cron Jobs
+        const cronList = document.getElementById('cron-list');
+        const jobs = data.cron_jobs?.jobs || [];
+        if (jobs.length === 0) {
+          cronList.innerHTML = '<tr><td colspan="4" class="unknown">Sin trabajos</td></tr>';
+        } else {
+          cronList.innerHTML = jobs.map(job => {
+            const statusClass = job.status === 'ok' ? 'badge-ok' : 'badge-warn';
+            return `<tr>
+              <td>${job.name}</td>
+              <td class="mono">${job.schedule}</td>
+              <td>${job.next}</td>
+              <td><span class="badge ${statusClass}">${job.status}</span></td>
+            </tr>`;
+          }).join('');
+        }
+        
+        // Active Jobs
+        const activeList = document.getElementById('active-jobs');
+        const activeJobs = data.active_jobs || [];
+        if (activeJobs.length === 0) {
+          activeList.innerHTML = '<tr><td colspan="3" class="unknown">Sin trabajos activos</td></tr>';
+        } else {
+          activeList.innerHTML = activeJobs.slice(0, 5).map(job => {
+            return `<tr>
+              <td>${job.name}</td>
+              <td class="mono">${new Date(job.lastRun).toLocaleString()}</td>
+              <td><span class="badge badge-ok">${job.status}</span></td>
+            </tr>`;
+          }).join('');
+        }
+        
+        // Blockers
+        const blockersList = document.getElementById('blockers');
+        const blockers = data.blockers || [];
+        if (blockers.length === 0) {
+          blockersList.innerHTML = '<li class="ok">✓ Sin bloqueos activos</li>';
+        } else {
+          blockersList.innerHTML = blockers.map(b => 
+            `<li>⚠️ ${b.channel || 'system'}: ${b.issue}</li>`
+          ).join('');
+        }
+        
+        // Next Steps
+        const nextSteps = document.getElementById('next-steps');
+        const steps = data.next_steps || [];
+        if (steps.length === 0) {
+          nextSteps.innerHTML = '<li class="unknown">Sin pasos definidos</li>';
+        } else {
+          nextSteps.innerHTML = steps.map(s => `<li>→ ${s}</li>`).join('');
+        }
+        
+        // Security
+        document.getElementById('sec-critical').textContent = data.security?.critical || 0;
+        const secWarn = document.getElementById('sec-warn');
+        secWarn.textContent = data.security?.warnings || 0;
+        secWarn.className = (data.security?.warnings || 0) > 0 ? 'stat-value warn' : 'stat-value ok';
+        document.getElementById('sec-info').textContent = data.security?.info || 0;
+        
+        // Security findings
+        const findings = data.security?.findings || [];
+        const findingsEl = document.getElementById('sec-findings');
+        if (findings.length > 0) {
+          findingsEl.innerHTML = findings.map(f => 
+            `<div>⚠️ ${f.title}: ${f.detail.substring(0, 100)}...</div>`
+          ).join('<br>');
+        } else {
+          findingsEl.innerHTML = '<span class="ok">✓ Sin hallazgos de seguridad</span>';
+        }
+        
+      } catch (e) {
+        console.error('Error loading dashboard:', e);
+        document.getElementById('generated').textContent = 'Error cargando datos: ' + e.message;
+      }
+    }
+    
+    loadDashboard();
+  </script>
 </body>
 </html>
