@@ -1,54 +1,50 @@
 # STATUS - OpenClaw Operations Dashboard
 
-## Estado: ✅ PROYECTO MEJORADO
+## Estado: ✅ CORREGIDO Y LISTO
 
-### Mejoras Implementadas
+### Correcciones Aplicadas
 
-1. **Datos Reales**: collect.sh ahora usa:
-   - `openclaw status --json`
-   - `openclaw cron list --json`
-   - `openclaw agents list --json`
-   - `openclaw channels status --json`
-   - `openclaw security audit --json`
+1. **Parsing corregido**:
+   - ✅ gateway.state: ahora lee `.gateway.reachable`
+   - ✅ hostname: `.gateway.self.host`
+   - ✅ IP: `.gateway.self.ip`
+   - ✅ version: `.gateway.self.version`
 
-2. **Degradación Honesta**: 
-   - Campos unavailable → "unknown"
-   - JSON parse fail → `null` 
-   - CLI no disponible → fallback graceful
+2. **Separación de trabajos**:
+   - ✅ cron.active: jobs con `runningAtMs`
+   - ✅ cron.failed: jobs con `consecutiveErrors > 0`
+   - ✅ cron.healthy: jobs con `lastStatus == ok`
+   - ✅ recent_jobs: últimos 5 ejecutados
 
-3. **Nuevas Secciones**:
-   - ✅ Trabajos activos (active_jobs)
-   - ✅ Bloqueos (blockers) 
-   - ✅ Próximos pasos (next_steps)
+3. **Etiquetas visuales**:
+   - ✅ tag-dynamic (verde): datos reales
+   - ✅ tag-heuristic (amarillo): inferidos
+   - ✅ tag-stub (rojo): por implementar
 
-4. **Documentación**:
-   - README.md con tabla dinámica vs estático
-   - INTEGRATION.md actualizado
+### Datos Dinámicos (11 campos)
 
-### Estado Dinámico vs Estático
+- system (hostname, ip, os, node, version)
+- gateway (state, reachable, url, mode)
+- sessions (total, recent)
+- cron (jobs, active, failed, healthy)
+- channels
+- security
+- recent_jobs
 
-| Dato | Tipo | Fuente |
-|------|------|--------|
-| Sistema | ✅ Dinámico | openclaw status |
-| Gateway | ✅ Dinámico | openclaw status |
-| Agents | ✅ Dinámico | openclaw agents list |
-| Sessions | ✅ Dinámico | openclaw status |
-| Cron Jobs | ✅ Dinámico | openclaw cron list |
-| Channels | ✅ Dinámico | openclaw channels status |
-| Security | ✅ Dinámico | openclaw security audit |
-| Active Jobs | ✅ Dinámico | openclaw cron list |
-| Blockers | ✅ Dinámico | channels + system |
-| Next Steps | ✅ Dinámico | lógica basada en estado |
-| ~~Últimos resultados~~ | ❌ Stub | Por implementar |
+### Datos Heurísticos (2 campos)
+
+- blockers
+- next_steps
+
+### Stub (1 campo)
+
+- recent_results
 
 ### Pendientes
 
-- [ ] Últimos resultados de trabajos (parsear logs)
-- [ ] Webhook para update automático
-- [ ] Mejoras UI (opcional)
+- [ ] recent_results (parseo de logs)
+- [ ] GitHub push (manual)
 
-### Git
+---
 
-- ✅ Git inicializado
-- ✅ Commits hechos
-- ⚠️ Listo para GitHub (falta remote y push manual)
+**Listo para iteración final o despliegue.**

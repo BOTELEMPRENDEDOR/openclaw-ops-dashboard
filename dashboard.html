@@ -11,8 +11,9 @@
     h1 { color: #58a6ff; margin-bottom: 5px; font-size: 1.8rem; }
     h2 { color: #8b949e; font-size: 1rem; margin-bottom: 20px; }
     h3 { color: #f0f6fc; margin: 20px 0 10px; font-size: 1.1rem; border-bottom: 1px solid #30363d; padding-bottom: 5px; }
+    h4 { color: #8b949e; margin: 15px 0 8px; font-size: 0.95rem; }
     .card { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 15px; margin-bottom: 15px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px; }
     .stat { text-align: center; padding: 10px; }
     .stat-value { font-size: 2rem; font-weight: bold; }
     .stat-label { color: #8b949e; font-size: 0.85rem; }
@@ -37,6 +38,12 @@
     .refresh-btn { background: #238636; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
     .refresh-btn:hover { background: #2ea043; }
     .header { display: flex; justify-content: space-between; align-items: center; }
+    .data-tag { display: inline-block; font-size: 0.65rem; padding: 1px 4px; border-radius: 3px; margin-left: 5px; }
+    .tag-dynamic { background: rgba(63,185,80,0.2); color: #3fb950; }
+    .tag-heuristic { background: rgba(210,153,34,0.2); color: #d29922; }
+    .tag-stub { background: rgba(248,81,73,0.2); color: #f85149; }
+    .empty { color: #6e7681; font-style: italic; }
+    .section-label { font-size: 0.75rem; color: #8b949e; text-transform: uppercase; margin-bottom: 5px; }
   </style>
 </head>
 <body>
@@ -52,28 +59,28 @@
     <div id="generated" class="timestamp">Cargando...</div>
 
     <!-- System Overview -->
-    <h3>📊 Estado General</h3>
+    <h3>📊 Estado General <span class="data-tag tag-dynamic">DYNAMIC</span></h3>
     <div class="grid">
       <div class="card stat">
-        <div class="stat-value ok" id="gateway-state">●</div>
+        <div class="stat-value ok" id="gw-state">●</div>
         <div class="stat-label">Gateway</div>
-      </div>
-      <div class="card stat">
-        <div class="stat-value" id="agent-count">-</div>
-        <div class="stat-label">Agentes</div>
       </div>
       <div class="card stat">
         <div class="stat-value" id="session-count">-</div>
         <div class="stat-label">Sesiones</div>
       </div>
       <div class="card stat">
-        <div class="stat-value" id="cron-count">-</div>
+        <div class="stat-value" id="cron-total">-</div>
         <div class="stat-label">Cron Jobs</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-value ok" id="cron-healthy">✓</div>
+        <div class="stat-label">Healthy</div>
       </div>
     </div>
 
     <!-- Channels -->
-    <h3>📡 Canales</h3>
+    <h3>📡 Canales <span class="data-tag tag-dynamic">DYNAMIC</span></h3>
     <div class="card">
       <table>
         <tr><th>Canal</th><th>Estado</th><th>Detalle</th></tr>
@@ -90,50 +97,66 @@
       </table>
     </div>
 
-    <!-- Cron Jobs -->
-    <h3>⏰ Trabajos Programados</h3>
+    <!-- Active Jobs (currently running) -->
+    <h3>🔄 Trabajos Activos <span class="data-tag tag-dynamic">DYNAMIC</span></h3>
+    <div class="card">
+      <div id="active-jobs">
+        <span class="empty">Cargando...</span>
+      </div>
+    </div>
+
+    <!-- Recent Jobs -->
+    <h3>📋 Últimos Trabajos <span class="data-tag tag-dynamic">DYNAMIC</span></h3>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th>Nombre</th><th>Última ejecución</th><th>Estado</th></tr>
+        </thead>
+        <tbody id="recent-jobs">
+          <tr><td colspan="3" class="empty">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- All Cron Jobs -->
+    <h3>⏰ Todos los Cron Jobs <span class="data-tag tag-dynamic">DYNAMIC</span></h3>
     <div class="card">
       <table>
         <thead>
           <tr><th>Nombre</th><th>Schedule</th><th>Próximo</th><th>Estado</th></tr>
         </thead>
         <tbody id="cron-list">
-          <tr><td colspan="4" class="unknown">Cargando...</td></tr>
+          <tr><td colspan="4" class="empty">Cargando...</td></tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Active Jobs -->
-    <h3>🔄 Trabajos Activos (última ejecución)</h3>
+    <!-- Failed Jobs -->
+    <h3>❌ Trabajos Fallidos <span class="data-tag tag-dynamic">DYNAMIC</span></h3>
     <div class="card">
-      <table>
-        <thead>
-          <tr><th>Nombre</th><th>Última ejecución</th><th>Estado</th></tr>
-        </thead>
-        <tbody id="active-jobs">
-          <tr><td colspan="3" class="unknown">Cargando...</td></tr>
-        </tbody>
-      </table>
+      <div id="failed-jobs">
+        <span class="empty">Cargando...</span>
+      </div>
     </div>
 
     <!-- Blockers -->
-    <h3>🚧 Bloqueos / Problemas</h3>
+    <h3>🚧 Bloqueos <span class="data-tag tag-heuristic">HEURISTIC</span></h3>
     <div class="card">
       <ul id="blockers">
-        <li class="unknown">Cargando...</li>
+        <li class="empty">Cargando...</li>
       </ul>
     </div>
 
     <!-- Next Steps -->
-    <h3>📌 Próximos Pasos</h3>
+    <h3>📌 Próximos Pasos <span class="data-tag tag-heuristic">HEURISTIC</span></h3>
     <div class="card">
       <ul id="next-steps">
-        <li class="unknown">Cargando...</li>
+        <li class="empty">Cargando...</li>
       </ul>
     </div>
 
     <!-- Security -->
-    <h3>🔒 Seguridad</h3>
+    <h3>🔒 Seguridad <span class="data-tag tag-dynamic">DYNAMIC</span></h3>
     <div class="card">
       <div class="grid">
         <div class="stat"><div class="stat-value" id="sec-critical">-</div><div class="stat-label">Critical</div></div>
@@ -144,11 +167,21 @@
     </div>
 
     <!-- System Info -->
-    <h3>💻 Sistema</h3>
+    <h3>💻 Sistema <span class="data-tag tag-dynamic">DYNAMIC</span></h3>
     <div class="card mono" style="font-size:0.85rem;">
+      <div>Host: <span id="sys-hostname">cargando...</span> (<span id="sys-ip">...</span>)</div>
       <div>OS: <span id="sys-os">cargando...</span></div>
       <div>Node: <span id="sys-node">cargando...</span></div>
-      <div>Gateway URL: <span id="sys-gateway">cargando...</span></div>
+      <div>OpenClaw: <span id="sys-version">cargando...</span></div>
+      <div>Gateway: <span id="sys-gateway">cargando...</span></div>
+    </div>
+
+    <!-- Data Quality Legend -->
+    <h3>📖 Leyenda de Datos</h3>
+    <div class="card" style="font-size: 0.85rem;">
+      <div><span class="data-tag tag-dynamic">DYNAMIC</span> = Dato real desde OpenClaw CLI</div>
+      <div><span class="data-tag tag-heuristic">HEURISTIC</span> = Inferido desde el estado (no exacto)</div>
+      <div><span class="data-tag tag-stub">STUB</span> = Placeholder (por implementar)</div>
     </div>
 
     <div class="timestamp">
@@ -166,18 +199,21 @@
         document.getElementById('generated').textContent = 'Actualizado: ' + data.generated;
         document.getElementById('timestamp').textContent = data.generated;
         
-        // System
+        // System info
+        document.getElementById('sys-hostname').textContent = data.system?.hostname || 'unknown';
+        document.getElementById('sys-ip').textContent = data.system?.ip || 'unknown';
         document.getElementById('sys-os').textContent = data.system?.os || 'unknown';
         document.getElementById('sys-node').textContent = data.system?.node || 'unknown';
+        document.getElementById('sys-version').textContent = data.system?.version || 'unknown';
         document.getElementById('sys-gateway').textContent = data.gateway?.url || 'unknown';
         
         // Gateway state
         const gwState = data.gateway?.state || 'unknown';
-        const gwEl = document.getElementById('gateway-state');
-        if (gwState === 'ready' || gwState === 'running') {
+        const gwEl = document.getElementById('gw-state');
+        if (gwState === 'ready') {
           gwEl.textContent = '●';
           gwEl.className = 'stat-value ok';
-        } else if (gwState === 'unknown' || gwState === 'unavailable') {
+        } else if (gwState === 'unavailable') {
           gwEl.textContent = '?';
           gwEl.className = 'stat-value unknown';
         } else {
@@ -185,14 +221,13 @@
           gwEl.className = 'stat-value warn';
         }
         
-        // Agents
-        document.getElementById('agent-count').textContent = data.agents?.count || 0;
-        
         // Sessions
         document.getElementById('session-count').textContent = data.sessions?.total || 0;
         
-        // Cron
-        document.getElementById('cron-count').textContent = data.cron_jobs?.total || 0;
+        // Cron totals
+        const cron = data.cron || {};
+        document.getElementById('cron-total').textContent = cron.total || 0;
+        document.getElementById('cron-healthy').textContent = (cron.healthy?.length || 0) + '/' + (cron.total || 0);
         
         // Channels
         const tg = data.channels?.telegram || {};
@@ -201,10 +236,10 @@
         const tgStatus = document.getElementById('tg-status');
         if (tg.running) {
           tgStatus.innerHTML = '<span class="badge badge-ok">OK</span>';
-          document.getElementById('tg-detail').textContent = 'running: true';
+          document.getElementById('tg-detail').textContent = 'configured=' + tg.configured;
         } else {
           tgStatus.innerHTML = '<span class="badge badge-error">DOWN</span>';
-          document.getElementById('tg-detail').textContent = 'running: false';
+          document.getElementById('tg-detail').textContent = 'running=false';
         }
         
         const waStatus = document.getElementById('wa-status');
@@ -217,36 +252,60 @@
         }
         document.getElementById('wa-detail').textContent = wa.lastError || 'not linked';
         
-        // Cron Jobs
+        // Active Jobs
+        const activeEl = document.getElementById('active-jobs');
+        const activeJobs = cron.active || [];
+        if (activeJobs.length === 0) {
+          activeEl.innerHTML = '<span class="ok">✓ Sin trabajos activos ahora mismo</span>';
+        } else {
+          activeEl.innerHTML = activeJobs.map(job => 
+            `<div>🔄 <strong>${job.name}</strong> - Started: ${new Date(job.startedAt).toLocaleTimeString()}</div>`
+          ).join('');
+        }
+        
+        // Recent Jobs
+        const recentEl = document.getElementById('recent-jobs');
+        const recentJobs = data.recent_jobs || [];
+        if (recentJobs.length === 0) {
+          recentEl.innerHTML = '<tr><td colspan="3" class="empty">Sin trabajos recientes</td></tr>';
+        } else {
+          recentEl.innerHTML = recentJobs.map(job => {
+            const statusClass = job.status === 'ok' ? 'badge-ok' : 'badge-warn';
+            const durationSec = Math.round(job.duration / 1000);
+            return `<tr>
+              <td>${job.name}</td>
+              <td class="mono">${new Date(job.lastRun).toLocaleTimeString()}</td>
+              <td><span class="badge ${statusClass}">${job.status}</span> (${durationSec}s)</td>
+            </tr>`;
+          }).join('');
+        }
+        
+        // All Cron Jobs
         const cronList = document.getElementById('cron-list');
-        const jobs = data.cron_jobs?.jobs || [];
+        const jobs = cron.jobs || [];
         if (jobs.length === 0) {
-          cronList.innerHTML = '<tr><td colspan="4" class="unknown">Sin trabajos</td></tr>';
+          cronList.innerHTML = '<tr><td colspan="4" class="empty">Sin trabajos</td></tr>';
         } else {
           cronList.innerHTML = jobs.map(job => {
             const statusClass = job.status === 'ok' ? 'badge-ok' : 'badge-warn';
             return `<tr>
               <td>${job.name}</td>
               <td class="mono">${job.schedule}</td>
-              <td>${job.next}</td>
+              <td>in ${job.next}</td>
               <td><span class="badge ${statusClass}">${job.status}</span></td>
             </tr>`;
           }).join('');
         }
         
-        // Active Jobs
-        const activeList = document.getElementById('active-jobs');
-        const activeJobs = data.active_jobs || [];
-        if (activeJobs.length === 0) {
-          activeList.innerHTML = '<tr><td colspan="3" class="unknown">Sin trabajos activos</td></tr>';
+        // Failed Jobs
+        const failedEl = document.getElementById('failed-jobs');
+        const failedJobs = cron.failed || [];
+        if (failedJobs.length === 0) {
+          failedEl.innerHTML = '<span class="ok">✓ Sin trabajos fallidos</span>';
         } else {
-          activeList.innerHTML = activeJobs.slice(0, 5).map(job => {
-            return `<tr>
-              <td>${job.name}</td>
-              <td class="mono">${new Date(job.lastRun).toLocaleString()}</td>
-              <td><span class="badge badge-ok">${job.status}</span></td>
-            </tr>`;
-          }).join('');
+          failedEl.innerHTML = failedJobs.map(job => 
+            `<div>❌ <strong>${job.name}</strong> - ${job.errors} errores, último: ${job.lastStatus}</div>`
+          ).join('');
         }
         
         // Blockers
@@ -255,9 +314,10 @@
         if (blockers.length === 0) {
           blockersList.innerHTML = '<li class="ok">✓ Sin bloqueos activos</li>';
         } else {
-          blockersList.innerHTML = blockers.map(b => 
-            `<li>⚠️ ${b.channel || 'system'}: ${b.issue}</li>`
-          ).join('');
+          blockersList.innerHTML = blockers.map(b => {
+            const sevClass = b.severity === 'high' ? 'error' : 'warn';
+            return `<li class="${sevClass}">⚠️ [${b.severity}] ${b.channel || b.type}: ${b.issue}</li>`;
+          }).join('');
         }
         
         // Next Steps
@@ -276,20 +336,19 @@
         secWarn.className = (data.security?.warnings || 0) > 0 ? 'stat-value warn' : 'stat-value ok';
         document.getElementById('sec-info').textContent = data.security?.info || 0;
         
-        // Security findings
         const findings = data.security?.findings || [];
         const findingsEl = document.getElementById('sec-findings');
         if (findings.length > 0) {
           findingsEl.innerHTML = findings.map(f => 
-            `<div>⚠️ ${f.title}: ${f.detail.substring(0, 100)}...</div>`
+            `<div class="warn">⚠️ ${f.title}</div>`
           ).join('<br>');
         } else {
-          findingsEl.innerHTML = '<span class="ok">✓ Sin hallazgos de seguridad</span>';
+          findingsEl.innerHTML = '<span class="ok">✓ Sin hallazgos</span>';
         }
         
       } catch (e) {
         console.error('Error loading dashboard:', e);
-        document.getElementById('generated').textContent = 'Error cargando datos: ' + e.message;
+        document.getElementById('generated').textContent = 'Error: ' + e.message;
       }
     }
     
