@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw Operations Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0d1117; color: #c9d1d9; line-height: 1.6; padding: 20px; }
+    .container { max-width: 900px; margin: 0 auto; }
+    h1 { color: #58a6ff; margin-bottom: 5px; font-size: 1.8rem; }
+    h2 { color: #8b949e; font-size: 1rem; margin-bottom: 20px; }
+    h3 { color: #f0f6fc; margin: 20px 0 10px; font-size: 1.1rem; border-bottom: 1px solid #30363d; padding-bottom: 5px; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 15px; margin-bottom: 15px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+    .stat { text-align: center; padding: 10px; }
+    .stat-value { font-size: 2rem; font-weight: bold; }
+    .stat-label { color: #8b949e; font-size: 0.85rem; }
+    .ok { color: #3fb950; }
+    .warn { color: #d29922; }
+    .error { color: #f85149; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #30363d; }
+    th { color: #8b949e; font-weight: normal; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; }
+    .badge-ok { background: rgba(63,185,80,0.2); color: #3fb950; }
+    .badge-warn { background: rgba(210,153,34,0.2); color: #d29922; }
+    .badge-error { background: rgba(248,81,73,0.2); color: #f85149; }
+    ul { list-style: none; }
+    li { padding: 5px 0; }
+    .mono { font-family: monospace; font-size: 0.85rem; }
+    .timestamp { color: #8b949e; font-size: 0.8rem; text-align: right; margin-top: 20px; }
+    a { color: #58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚡ OpenClaw Operations</h1>
+    <h2>Panel de Control - Estado General</h2>
+
+    <!-- System Overview -->
+    <div class="grid">
+      <div class="card stat">
+        <div class="stat-value ok">●</div>
+        <div class="stat-label">Gateway Service</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-value">1</div>
+        <div class="stat-label">Agentes</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-value">72</div>
+        <div class="stat-label">Sesiones</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-value warn">1</div>
+        <div class="stat-label">Warnings</div>
+      </div>
+    </div>
+
+    <!-- Channels -->
+    <h3>📡 Canales</h3>
+    <div class="card">
+      <table>
+        <tr><th>Canal</th><th>Estado</th><th>Detalle</th></tr>
+        <tr><td>Telegram</td><td><span class="badge badge-ok">OK</span></td><td class="mono">token config · 1/1 accounts</td></tr>
+        <tr><td>WhatsApp</td><td><span class="badge badge-warn">WARN</span></td><td class="mono">Not linked (no session)</td></tr>
+      </table>
+    </div>
+
+    <!-- Cron Jobs -->
+    <h3>⏰ Trabajos Programados</h3>
+    <div class="card">
+      <table>
+        <tr><th>Nombre</th><th>Schedule</th><th>Próximo</th><th>Estado</th></tr>
+        <tr><td>Supervisor 1m</td><td class="mono">* * * * *</td><td>&lt;1m</td><td><span class="badge badge-ok">ok</span></td></tr>
+        <tr><td>Reporte 10m</td><td class="mono">*/10 * * * *</td><td>1m</td><td><span class="badge badge-ok">ok</span></td></tr>
+        <tr><td>Revision horaria</td><td class="mono">5 * * * *</td><td>46m</td><td><span class="badge badge-ok">ok</span></td></tr>
+        <tr><td>Progreso proactivo</td><td class="mono">every 3h</td><td>2h</td><td><span class="badge badge-ok">ok</span></td></tr>
+        <tr><td>Moltbook interact</td><td class="mono">every 12h</td><td>6h</td><td><span class="badge badge-ok">ok</span></td></tr>
+        <tr><td>Sec-resumen</td><td class="mono">every 12h</td><td>6h</td><td><span class="badge badge-ok">ok</span></td></tr>
+      </table>
+    </div>
+
+    <!-- Blockers -->
+    <h3>🚧 Bloqueos / Problemas</h3>
+    <div class="card">
+      <ul>
+        <li>⚠️ WhatsApp no vinculado (session expired)</li>
+        <li>⚠️ Telegram groupPolicy allowlist vacío (grupos silenciados)</li>
+      </ul>
+    </div>
+
+    <!-- Security -->
+    <h3>🔒 Seguridad</h3>
+    <div class="card">
+      <div class="grid">
+        <div class="stat"><div class="stat-value">0</div><div class="stat-label">Critical</div></div>
+        <div class="stat"><div class="stat-value warn">1</div><div class="stat-label">Warnings</div></div>
+        <div class="stat"><div class="stat-value">1</div><div class="stat-label">Info</div></div>
+      </div>
+      <p style="margin-top:10px;font-size:0.85rem;color:#8b949e;">⚠️ Reverse proxy headers not trusted (loopback bind)</p>
+    </div>
+
+    <!-- System Info -->
+    <h3>💻 Sistema</h3>
+    <div class="card mono" style="font-size:0.85rem;">
+      <div>OS: linux 6.8.0-40-generic (x64)</div>
+      <div>Node: v22.22.0</div>
+      <div>Host: 166 (166.0.112.163)</div>
+      <div>Dashboard: http://127.0.0.1:18789/</div>
+    </div>
+
+    <div class="timestamp">
+      Actualizado: 2026-03-08T20:17:00Z | <a href="https://github.com">GitHub</a> | <a href="https://vercel.com">Vercel</a>
+    </div>
+  </div>
+</body>
+</html>

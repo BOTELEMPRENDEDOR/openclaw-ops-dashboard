@@ -1,0 +1,45 @@
+{
+  "generated": "2026-03-08T20:20:23+00:00",
+  "system": {
+    "os": "Linux 6.8.0-40-generic (x86_64)",
+    "node": "v22.22.0",
+    "hostname": "166"
+  },
+  "gateway": {
+    "service": "stopped",
+    "pid": 0
+  },
+  "agents": [
+    {
+      "name": "main",
+      "type": "default",
+      "status": "active"
+    }
+  ],
+  "sessions": {
+    "total": 72,
+    "active": 10
+  },
+  "channels": {
+    "telegram": "ok",
+    "whatsapp": "warn"
+  },
+  "cron_jobs": [
+    {"name": "Supervisor 1m", "schedule": "* * * * *", "status": "ok", "next": "<1m"},
+    {"name": "Reporte 10m", "schedule": "*/10 * * * *", "status": "ok", "next": "1m"},
+    {"name": "Revision horaria", "schedule": "5 * * * *", "status": "ok", "next": "46m"},
+    {"name": "Progreso proactivo 150m", "schedule": "every 3h", "status": "ok", "next": "2h"},
+    {"name": "Moltbook interact", "schedule": "every 12h", "status": "ok", "next": "6h"},
+    {"name": "Sec-resumen 12h", "schedule": "every 12h", "status": "ok", "next": "6h"}
+  ],
+  "security": {
+    "critical": 0,
+    "warnings": 1,
+    "info": 1
+  },
+  "recent_results": [],
+  "blockers": [
+    "WhatsApp no vinculado (session expired)",
+    "Telegram groupPolicy allowlist vacio"
+  ]
+}
