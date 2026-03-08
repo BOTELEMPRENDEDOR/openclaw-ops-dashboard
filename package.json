@@ -1,12 +1,11 @@
 {
   "name": "openclaw-ops-dashboard",
   "version": "1.1.0",
-  "description": "OpenClaw Operations Dashboard - Real-time monitoring panel",
+  "description": "OpenClaw Operations Dashboard - Real-time monitoring panel with auth",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js",
-    "collect": "./collect.sh > data.json"
+    "dev": "node server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -19,5 +18,11 @@
     "type": "git",
     "url": "https://github.com/BOTELEMPRENDEDOR/openclaw-ops-dashboard.git"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "vercel": {
+    "env": {
+      "ADMIN_USER": "@openclaw-ops-admin-user",
+      "ADMIN_PASS": "@openclaw-ops-admin-pass"
+    }
+  }
 }
