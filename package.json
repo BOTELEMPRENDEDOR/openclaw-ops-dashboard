@@ -1,0 +1,23 @@
+{
+  "name": "openclaw-ops-dashboard",
+  "version": "1.1.0",
+  "description": "OpenClaw Operations Dashboard - Real-time monitoring panel",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "collect": "./collect.sh > data.json"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "engines": {
+    "node": ">=16.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BOTELEMPRENDEDOR/openclaw-ops-dashboard.git"
+  },
+  "license": "MIT"
+}
