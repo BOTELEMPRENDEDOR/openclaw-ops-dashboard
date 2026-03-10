@@ -1,50 +1,19 @@
 # STATUS - OpenClaw Operations Dashboard
 
-## Estado: ✅ CORREGIDO Y LISTO
+## Estado: ✅ listo para commit
 
-### Correcciones Aplicadas
+## Cerrado en esta iteración
 
-1. **Parsing corregido**:
-   - ✅ gateway.state: ahora lee `.gateway.reachable`
-   - ✅ hostname: `.gateway.self.host`
-   - ✅ IP: `.gateway.self.ip`
-   - ✅ version: `.gateway.self.version`
+- Auth básica operativa sin credenciales por defecto hardcodeadas.
+- Login frontend + logout + manejo de backend sin auth configurada.
+- Fallback explícito entre tiempo real y `data.json`.
+- `healthz` ampliado con estado útil para Vercel/local.
+- `collect.sh` reescrito para generar JSON válido/robusto con `jq`.
+- `recent_jobs` ahora sale ordenado por última ejecución real.
+- `vercel.json` con timeout y headers básicos.
+- README alineado al estado real del proyecto.
 
-2. **Separación de trabajos**:
-   - ✅ cron.active: jobs con `runningAtMs`
-   - ✅ cron.failed: jobs con `consecutiveErrors > 0`
-   - ✅ cron.healthy: jobs con `lastStatus == ok`
-   - ✅ recent_jobs: últimos 5 ejecutados
+## Qué sigue siendo externo
 
-3. **Etiquetas visuales**:
-   - ✅ tag-dynamic (verde): datos reales
-   - ✅ tag-heuristic (amarillo): inferidos
-   - ✅ tag-stub (rojo): por implementar
-
-### Datos Dinámicos (11 campos)
-
-- system (hostname, ip, os, node, version)
-- gateway (state, reachable, url, mode)
-- sessions (total, recent)
-- cron (jobs, active, failed, healthy)
-- channels
-- security
-- recent_jobs
-
-### Datos Heurísticos (2 campos)
-
-- blockers
-- next_steps
-
-### Stub (1 campo)
-
-- recent_results
-
-### Pendientes
-
-- [ ] recent_results (parseo de logs)
-- [ ] GitHub push (manual)
-
----
-
-**Listo para iteración final o despliegue.**
+- Realtime real desde Vercel requiere backend fuera de Vercel o mover el servicio al VPS.
+- Deploy/push final depende de credenciales GitHub/Vercel disponibles.

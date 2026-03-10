@@ -35,27 +35,55 @@
     .timestamp { color: #8b949e; font-size: 0.8rem; text-align: right; margin-top: 20px; }
     a { color: #58a6ff; text-decoration: none; }
     a:hover { text-decoration: underline; }
+    .toolbar { display: flex; gap: 10px; }
     .refresh-btn { background: #238636; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
     .refresh-btn:hover { background: #2ea043; }
-    .header { display: flex; justify-content: space-between; align-items: center; }
+    .secondary-btn { background: transparent; color: #c9d1d9; border: 1px solid #30363d; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+    .secondary-btn:hover { border-color: #58a6ff; color: #58a6ff; }
+    .header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
     .data-tag { display: inline-block; font-size: 0.65rem; padding: 1px 4px; border-radius: 3px; margin-left: 5px; }
     .tag-dynamic { background: rgba(63,185,80,0.2); color: #3fb950; }
     .tag-heuristic { background: rgba(210,153,34,0.2); color: #d29922; }
     .tag-stub { background: rgba(248,81,73,0.2); color: #f85149; }
     .empty { color: #6e7681; font-style: italic; }
     .section-label { font-size: 0.75rem; color: #8b949e; text-transform: uppercase; margin-bottom: 5px; }
+    .banner { background: #1f6feb22; border: 1px solid #1f6feb55; color: #c9d1d9; padding: 10px 12px; border-radius: 6px; margin-bottom: 15px; font-size: 0.9rem; }
+    .banner.warn { background: rgba(210,153,34,0.12); border-color: rgba(210,153,34,0.45); }
+    .login-card { max-width: 420px; margin: 40px auto; }
+    .login-form { display: grid; gap: 10px; }
+    .login-form input { width: 100%; background: #0d1117; border: 1px solid #30363d; color: #c9d1d9; border-radius: 6px; padding: 10px 12px; }
+    .login-form button { background: #238636; color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; }
+    .login-error { color: #f85149; font-size: 0.9rem; min-height: 1.2em; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div id="login-view" class="container hidden">
+    <div class="card login-card">
+      <h1>⚡ OpenClaw Operations</h1>
+      <h2>Inicia sesión para ver el panel</h2>
+      <form id="login-form" class="login-form">
+        <input id="login-user" type="text" placeholder="Usuario" autocomplete="username" required />
+        <input id="login-pass" type="password" placeholder="Contraseña" autocomplete="current-password" required />
+        <button type="submit">Entrar</button>
+        <div id="login-error" class="login-error"></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="dashboard-view" class="container hidden">
     <div class="header">
       <div>
         <h1>⚡ OpenClaw Operations</h1>
         <h2>Panel de Control Operativo</h2>
       </div>
-      <button class="refresh-btn" onclick="location.reload()">🔄 Refresh</button>
+      <div class="toolbar">
+        <button class="refresh-btn" id="refresh-btn">🔄 Refresh</button>
+        <button class="secondary-btn" id="logout-btn">Salir</button>
+      </div>
     </div>
 
+    <div id="app-banner" class="banner hidden"></div>
     <div id="generated" class="timestamp">Cargando...</div>
 
     <!-- System Overview -->
@@ -190,10 +218,69 @@
   </div>
 
   <script>
+    const AUTH_STORAGE_KEY = 'openclaw_ops_basic_token';
+
+    function setBanner(message, type = 'info') {
+      const el = document.getElementById('app-banner');
+      el.textContent = message;
+      el.className = `banner ${type === 'warn' ? 'warn' : ''}`.trim();
+      el.classList.remove('hidden');
+    }
+
+    function clearBanner() {
+      const el = document.getElementById('app-banner');
+      el.textContent = '';
+      el.className = 'banner hidden';
+    }
+
+    function showLogin(message = '') {
+      document.getElementById('dashboard-view').classList.add('hidden');
+      document.getElementById('login-view').classList.remove('hidden');
+      document.getElementById('login-error').textContent = message;
+    }
+
+    function showDashboard() {
+      document.getElementById('login-view').classList.add('hidden');
+      document.getElementById('dashboard-view').classList.remove('hidden');
+    }
+
+    function getAuthToken() {
+      return localStorage.getItem(AUTH_STORAGE_KEY) || '';
+    }
+
+    async function fetchDashboardData() {
+      const token = getAuthToken();
+      const response = await fetch('/api/data', {
+        headers: token ? { Authorization: `Basic ${token}` } : {}
+      });
+
+      if (response.status === 401) {
+        localStorage.removeItem(AUTH_STORAGE_KEY);
+        throw new Error('AUTH_REQUIRED');
+      }
+
+      if (response.status === 503) {
+        throw new Error('AUTH_NOT_CONFIGURED');
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      return response.json();
+    }
+
     async function loadDashboard() {
       try {
-        const response = await fetch('data.json');
-        const data = await response.json();
+        clearBanner();
+        const data = await fetchDashboardData();
+        showDashboard();
+
+        if (data._fallback) {
+          setBanner('Mostrando fallback estático: este despliegue no puede ejecutar OpenClaw CLI en tiempo real.', 'warn');
+        } else if (data._meta?.mode === 'realtime') {
+          setBanner(`Modo tiempo real activo (${data._meta?.runtime || 'node'}).`);
+        }
         
         // Timestamp
         document.getElementById('generated').textContent = 'Actualizado: ' + data.generated;
@@ -348,11 +435,65 @@
         
       } catch (e) {
         console.error('Error loading dashboard:', e);
+        if (e.message === 'AUTH_REQUIRED') {
+          showLogin('Inicia sesión para cargar el panel.');
+          return;
+        }
+        if (e.message === 'AUTH_NOT_CONFIGURED') {
+          showLogin('Falta configurar ADMIN_USER y ADMIN_PASS en el backend.');
+          return;
+        }
+        showDashboard();
+        setBanner(`No se pudo cargar el panel: ${e.message}`, 'warn');
         document.getElementById('generated').textContent = 'Error: ' + e.message;
       }
     }
-    
-    loadDashboard();
+
+    document.getElementById('refresh-btn').addEventListener('click', () => {
+      loadDashboard();
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+      clearBanner();
+      showLogin('Sesión cerrada.');
+    });
+
+    document.getElementById('login-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const user = document.getElementById('login-user').value;
+      const pass = document.getElementById('login-pass').value;
+      const errorEl = document.getElementById('login-error');
+      errorEl.textContent = 'Verificando...';
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user, pass })
+        });
+
+        const payload = await response.json();
+        if (response.status === 503) {
+          throw new Error(payload.error || 'Auth not configured');
+        }
+        if (!response.ok || !payload.token) {
+          throw new Error(payload.error || 'Login failed');
+        }
+
+        localStorage.setItem(AUTH_STORAGE_KEY, payload.token);
+        errorEl.textContent = '';
+        await loadDashboard();
+      } catch (error) {
+        errorEl.textContent = error.message || 'Login failed';
+      }
+    });
+
+    if (getAuthToken()) {
+      loadDashboard();
+    } else {
+      showLogin();
+    }
   </script>
 </body>
 </html>

@@ -1,23 +1,39 @@
 {
   "version": 2,
+  "functions": {
+    "server.js": {
+      "maxDuration": 30
+    }
+  },
   "builds": [
     {
       "src": "server.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "dashboard.html",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/api/data",
-      "dest": "/server.js"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/dashboard.html"
+      "dest": "/server.js"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "same-origin"
+        }
+      ]
     }
   ]
 }

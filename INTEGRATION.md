@@ -1,62 +1,33 @@
 # Plan de Integración
 
-## Objetivo
-Dashboard de operaciones OpenClaw accesible via web (Vercel/GitHub Pages).
+## Arquitectura final recomendada
 
-## Estado Actual
-- [x] Estructura de proyecto creada
-- [x] Script de recolección de datos (collect.sh)
-- [ ] HTML del dashboard
-- [ ] Git repository inicializado
-- [ ] Despliegue configurado
+### Camino 1: simple y estable
+- **Frontend + auth + fallback estático en Vercel**
+- **`data.json` actualizado desde el VPS**
+- Bueno para snapshot operativo sin exponer OpenClaw directamente
 
-## Tareas Pendientes
+### Camino 2: tiempo real real
+- **`server.js` corriendo en el VPS** donde existe `openclaw`
+- Reverse proxy / dominio / auth por delante
+- Opcionalmente reutilizar el mismo frontend
 
-### 1. Dashboard HTML
-- [ ] Crear dashboard.html con datos de data.json
-- [ ] Diseño responsivo (móvil + escritorio)
-- [ ] Indicadores visuales de estado (verde/amarillo/rojo)
+## Hechos ya completados
 
-### 2. GitHub
-- [ ] Inicializar git: `git init`
-- [ ] Crear .gitignore
-- [ ] Commit inicial
-- [ ] Crear repo en GitHub (manual o gh CLI)
-- [ ] Push
+- [x] Dashboard HTML funcional
+- [x] Backend Node funcional
+- [x] Login + auth básica
+- [x] Fallback estático documentado y visible en UI
+- [x] Health endpoint
+- [x] Configuración Vercel básica
+- [x] Recolección real via `collect.sh`
 
-### 3. Vercel
-- [ ] Conectar repo a Vercel
-- [ ] Configurar build: `vercel --prod`
-- [ ] Domain (opcional)
+## Pendientes reales
 
-### 4. Actualización Automática
-- [ ] Webhook desde OpenClaw?
-- [ ] Cron en servidor actualiza JSON
-- [ ] Git push dispara rebuild
+- [ ] Push/deploy final
+- [ ] Configurar variables `ADMIN_USER` y `ADMIN_PASS` en Vercel
+- [ ] Decidir si el modo productivo será snapshot estático o backend realtime en VPS
 
-## Alternativas de Hosting
+## Nota clave
 
-| Opción | Costo | Ventajas |
-|--------|-------|----------|
-| Vercel | Gratis | CI/CD automático, global CDN |
-| GitHub Pages | Gratis | Integrado con GitHub |
-| Netlify | Gratis | Similar a Vercel |
-
-## API de Datos
-
-Para datos en tiempo real, considerar:
-
-```javascript
-// Ejemplo: Endpoint en el servidor OpenClaw
-app.get('/api/dashboard', (req, res) => {
-  exec('./collect.sh', (err, stdout) => {
-    res.json(JSON.parse(stdout));
-  });
-});
-```
-
-Esto permitiría actualizar sin commit+push.
-
----
-
-**Ultima actualización**: 2026-03-08
+**Vercel no sustituye al host OpenClaw.** Si el objetivo es telemetría en tiempo real del VPS, el backend que ejecuta `openclaw` debe vivir en ese VPS o detrás de él.
